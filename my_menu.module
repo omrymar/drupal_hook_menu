@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+
+function my_menu_menu(){
+  $items['admin/my_menu'] = array(
+    'title' => 'My menu',
+    'description' => 'History of K-1 fighters',
+    'page callback' => 'my_menu_menu_page',
+    'weight' => '10',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/history_of_badr'] = array(
+    'title' => 'History of Badr Hari',
+    'description' => 'Life history of Badr Hari',
+    'page callback' => 'my_menu_history_of_badr_menu_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/history_of_alistar'] = array(
+    'title' => 'History of Alistar Overim',
+    'description' => 'Life history of Alistar Overim',
+    'page callback' => 'my_menu_history_of_alistar_menu_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/history_of_badr/wins'] = array(
+    'title' => 'History of wins of Badr Hari',
+    'description' => 'Life history of Badr Hari',
+    'page callback' => 'my_menu_history_of_badr_wins_menu_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/history_of_alistar/wins'] = array(
+    'title' => 'History of wins of Alistar Overim',
+    'description' => 'Life history of Alistar Overim',
+    'page callback' => 'my_menu_history_of_alistar_wins_menu_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  return $items;
+}
+
+function my_menu_permission() {
+  return array(
+    'access to history_of_alistar page' => array(
+      'title' => t('Access history_of_alistar page'),
+      'description' => t('Administrator'),
+    ),
+    'access to history_of_badr page' => array(
+      'title' => t('Access history_of_badr page'),
+      'description' => t('Administrator'),
+    ),
+
+  );
+}
+

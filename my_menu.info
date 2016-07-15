@@ -1,0 +1,5 @@
+name = My menu
+description = My first hook menu
+package = custom module
+core = 7.x
+files[] = my_menu.inc
