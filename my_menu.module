@@ -1,5 +1,6 @@
 <?php
 
+require_once('my_menu.pages.inc');
 /**
  * Implements hook_menu().
  */
@@ -11,6 +12,7 @@ function my_menu_menu(){
     'page callback' => 'my_menu_menu_page',
     'weight' => '10',
     'file' => 'my_menu.pages.inc',
+    //'access callback' => t('user_is_logged_in'),
     'access callback' => TRUE,
     'expanded' => TRUE,
   );
@@ -19,6 +21,25 @@ function my_menu_menu(){
     'title' => 'History of Badr Hari',
     'description' => 'Life history of Badr Hari',
     'page callback' => 'my_menu_history_of_badr_menu_page',
+    'file' => 'my_menu.pages.inc',
+    //'access callback' => t('user_is_logged_in'),
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+  
+  $items['admin/my_menu/history_of_badr/wins'] = array(
+    'title' => 'History of wins of Badr Hari',
+    'description' => 'Life history of Badr Hari',
+    'page callback' => 'my_menu_history_of_badr_wins_menu_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/history_of_badr/loss'] = array(
+    'title' => 'History of losses of Badr Hari',
+    'description' => 'Life history of Badr Hari',
+    'page callback' => 'my_menu_history_of_badr_loss_menu_page',
     'file' => 'my_menu.pages.inc',
     'access callback' => TRUE,
     'expanded' => TRUE,
@@ -29,15 +50,7 @@ function my_menu_menu(){
     'description' => 'Life history of Alistar Overim',
     'page callback' => 'my_menu_history_of_alistar_menu_page',
     'file' => 'my_menu.pages.inc',
-    'access callback' => TRUE,
-    'expanded' => TRUE,
-  );
-
-  $items['admin/my_menu/history_of_badr/wins'] = array(
-    'title' => 'History of wins of Badr Hari',
-    'description' => 'Life history of Badr Hari',
-    'page callback' => 'my_menu_history_of_badr_wins_menu_page',
-    'file' => 'my_menu.pages.inc',
+    //'access callback' => t('user_is_logged_in'),
     'access callback' => TRUE,
     'expanded' => TRUE,
   );
@@ -51,6 +64,69 @@ function my_menu_menu(){
     'expanded' => TRUE,
   );
 
+  $items['admin/my_menu/test_item'] = array(
+    'title' => 'Test item',
+    'description' => 'Test item',
+    'page callback' => 'my_menu_test_item_menu_page',
+    'weight' => '1',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/test_item/test_item_1'] = array(
+    'title' => 'Tab 1',
+    //'type' => MENU_DEFAULT_LOCAL_TASK,
+    'description' => 'First tab',
+    'page callback' => 'my_menu_test_item_1_menu_page',
+    'weight' => '2',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/test_item/test_item_2'] = array(
+    'title' => 'Tab 2',
+    //'type' => MENU_LOCAL_TASK,
+    'description' => 'Second tab',
+    'page callback' => 'my_menu_test_item_2_menu_page',
+    'weight' => '3',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['admin/my_menu/test_item/test_item_2/item_2'] = array(
+    'title' => 'Tab 2_2',
+    //'type' => MENU_LOCAL_TASK,
+    'description' => 'Second tab',
+    'page callback' => 'my_menu_test_item_2_2_menu_page',
+    'weight' => '4',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['test_altered_page'] = array(
+    'title' => 'Altered page',
+    'description' => 'Altered page',
+    'page callback' => 'my_menu_test_altered_page',
+    'file' => 'my_menu.pages.inc',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  );
+
+  $items['get_node/%node/node_show'] = array(
+    'title callback' => 'my_menu_node_of_item',
+    'title' => 'Show a simple node',
+    'title arguments' => array(1),
+    'page callback' => 'my_menu_show_node_item',
+    'file' => 'my_menu.pages.inc',
+    'page arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => TRUE,
+  );
+
   return $items;
 }
 
@@ -59,12 +135,61 @@ function my_menu_permission() {
     'access to history_of_alistar page' => array(
       'title' => t('Access history_of_alistar page'),
       'description' => t('Administrator'),
+      'access callback' => t('user_is_logged_in'),
     ),
     'access to history_of_badr page' => array(
       'title' => t('Access history_of_badr page'),
       'description' => t('Administrator'),
+      'access callback' => t('user_is_logged_in'),
     ),
 
   );
 }
+
+/**
+ * Implements hook_menu_alter().
+ */
+
+function my_menu_menu_alter(&$items) {
+  if (!empty($items['test_altered_page'])) {
+    $items['test_altered_page_new'] = $items['test_altered_page'];
+    $items['test_altered_page_new']['title'] = 'Altered menu item';
+    unset($items['test_altered_page']);
+  }
+  if (!empty($items['test_altered_page_new'])) {
+    $items['test_altered_page_new']['page callback'] = 'my_menu_test_item_altered_menu_page';
+  }
+  foreach ($items as $route => $item) {
+    $result = module_invoke_all('my_menu_menu', $route, $item);
+    drupal_alter('my_menu_menu', $result, $route, $item);
+    foreach ($result as $subroute => $subitem) {
+      $items[$route . '/' . $subroute] = $subitem;
+    }
+  }
+}
+
+/**
+ * Implements hook_my_menu_menu().
+ */
+
+function my_menu_my_menu_menu($route, $item)
+{
+  $subitems = array();
+  if ($route == 'admin/my_menu/history_of_badr') {
+    $subitems['wins'] = [
+      'title' => 'Win number 1',
+      'description' => 'Win number 1',
+      'page callback' => 'my_menu_history_of_badr_w_menu_page',
+      'access callback' => TRUE,
+      //'file' => 'my_menu.pages.inc',
+      'expanded' => TRUE,
+    ];
+  }
+  return $subitems;
+}
+
+
+
+
+
 
